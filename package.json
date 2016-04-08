@@ -18,6 +18,9 @@
   "homepage": "https://github.com/phipix01/mingle-me#readme",
   "dependencies": {
     "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "express-sessions": "^1.0.5",
+    "request": "^2.70.0",
     "simple-oauth2": "^0.6.0"
   }
 }

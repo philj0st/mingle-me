@@ -1,10 +1,11 @@
 var express = require('express'),
     app = express();
 
-
-app.set('port', (process.env.PORT || 5000));
-
-//app.use(express.static(__dirname + '/public'));
+var session = require("express-session")({
+  secret: "doom and destruction",
+  resave: true,
+  saveUninitialized: true
+});
 
 var oauth2 = require('simple-oauth2')({
   clientID: '7a712978aeabada1cb22aae7fda0329308f1b933c851492d148baf2bdc288b4a',
@@ -14,14 +15,17 @@ var oauth2 = require('simple-oauth2')({
   authorizationPath: '/oauth/authorize'
 });
 
+var Api = require('./Api');
+
+app.use(session)
+app.use(express.static('public'));
+
+app.set('port', (process.env.PORT || 5000));
+
+
 // Authorization uri definition
 var authorization_uri = oauth2.authCode.authorizeURL({
   redirect_uri: 'http://mingle-me.herokuapp.com/callback'
-});
-
-// Initial page redirecting to Github
-app.get('/auth', function (req, res) {
-    res.redirect(authorization_uri);
 });
 
 // Callback service parsing the authorization token and asking for the access token
@@ -34,19 +38,29 @@ app.get('/callback', function (req, res) {
   }, saveToken);
 
   function saveToken(error, result) {
-    if (error) { console.log('Access Token Error', error.message); }
-    token = oauth2.accessToken.create(result);
-    console.log(token);
+    if (error) {
+      console.log('Access Token Error', error.message);
+      res.redirect('/auth')
+     }
+    req.session.token = oauth2.accessToken.create(result);
+    console.log('session token',req.session.token);
   }
 });
 
+//ROUTES
 app.get('/', function (req, res) {
-  res.send('Hello<br><a href="/auth">Log in with RC</a>');
+  if (req.session.token) {
+    res.send(Api.get('/people/me', req.session.token))
+  }else {
+    res.redirect('/auth')
+  }
+});
+
+// Initial page redirecting to RC/login
+app.get('/auth', function (req, res) {
+  res.redirect(authorization_uri);
 });
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
-
-
-console.log('Express server started on port 3000');
