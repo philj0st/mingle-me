@@ -30,7 +30,7 @@ app.get('/callback', function (req, res) {
 
   oauth2.authCode.getToken({
     code: code,
-    redirect_uri: 'http://localhost:3000/callback'
+    redirect_uri: 'http://mingle-me.herokuapp.com/callback'
   }, saveToken);
 
   function saveToken(error, result) {
