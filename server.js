@@ -44,6 +44,9 @@ app.get('/', function (req, res) {
   res.send('Hello<br><a href="/auth">Log in with RC</a>');
 });
 
-app.listen(3000);
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
+});
+
 
 console.log('Express server started on port 3000');
