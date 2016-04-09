@@ -1,13 +1,14 @@
 var request = require('request');
-var Api = function (path, token) {
-  return {
-    get: request('https://www.recurse.com/api/v1' + path + '?access_token=' + token,
+var Api = {
+  get: function (path, token, callback) {
+    request('https://www.recurse.com/api/v1' + path + '?access_token=' + token,
         function (error, response, body) {
           if (!error && response.statusCode == 200) {
+            console.log('returning from api call', body);
+            callback(null, body)
             return body
-        } else {return error}
+        } else {callback('api call was not successful', null)}
       })
   }
 }
-
-module.export = Api
+module.exports = Api
