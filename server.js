@@ -68,13 +68,21 @@ app.get('/callback', function (req, res) {
 //ROUTES
 app.get('/', function (req, res) {
   if (req.session.token) {
-    var me = Api.get('/people/me', req.session.token.token.access_token, function (err, result) {
-      console.log(result);
-      //continue .. doesnt print to user-agent
-      // res.json(me)
-      console.log(me);
-      res.send('youre logged in');
+
+    let batchCall = Api.getPromise('batches', req.session.token.token.access_token)
+    let meCall = Api.getPromise('/people/me', req.session.token.token.access_token)
+
+    //if all calls were successful
+    Promise.all([batchCall, meCall]).then((values) => {
+      console.log(values);
+      res.send(
+        <h1>hello {values[0].first_name}</h1>
+        
+      )
+    }, (err) => {
+      console.log(err);
     })
+
   }else {
     res.redirect('/auth')
   }
@@ -86,8 +94,18 @@ app.get('/auth', function (req, res) {
 });
 
 //mingleMe Api
-app.get('/currentBatch', function (req, res) {
-  res.json()
+app.get('/me', function (req, res) {
+  Api.get('/people/me', req.session.token.token.access_token, function (err, result) {
+    console.log(result);
+    res.json(result)
+  })
+})
+
+app.get('/mybatch', function (req, res) {
+  Api.get('/people/me', req.session.token.token.access_token, function (err, result) {
+    console.log(result);
+    res.json(result)
+  })
 })
 
 app.listen(app.get('port'), function() {
