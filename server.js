@@ -68,10 +68,10 @@ app.get('/callback', function (req, res) {
 //ROUTES
 app.get('/', function (req, res) {
   if (req.session.token) {
-
+    console.log('logged in successful');
     var batchCall = Api.getPromise('batches', req.session.token.token.access_token)
     var meCall = Api.getPromise('/people/me', req.session.token.token.access_token)
-
+    console.log('promise returned', meCall);
     //if all calls were successful
     Promise.all([batchCall, meCall]).then((values) => {
       console.log(values);
