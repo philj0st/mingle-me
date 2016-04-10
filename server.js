@@ -7,31 +7,30 @@ var session = require("express-session")({
   saveUninitialized: true
 });
 
-// HEROKU
-var credentials = {
-    clientID: '7a712978aeabada1cb22aae7fda0329308f1b933c851492d148baf2bdc288b4a',
-    clientSecret: '867407abdce6b384b84890276478dd9e21e7c740208ff05ed48882eda0eaac7a',
-    site: 'https://recurse.com',
-    redirect_uri: 'http://mingle-me.herokuapp.com/callback',
-    tokenPath: '/oauth/token',
-    authorizationPath: '/oauth/authorize'
-}
+var oauth2 = require('simple-oauth2')(credentials);
+var Api = require('./Api');
+var RecurseCenterUtils = require('./RecurseCenterUtils');
 
-// LOCAL
+// HEROKU
 // var credentials = {
-//     clientID: "422ad34b0e726f82525f8038d693d2da88ab0eaabc73c89c9da62c9e68f0fc0e",
-//     clientSecret: "2152a747c1cce4d0d5e5b19ecd8532d7c56fe643ca480e0bef8ee87aaed20dc4",
-//     site: "https://recurse.com",
-//     redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
-//     tokenPath: "/oauth/token",
-//     authorizationPath: "/oauth/authorize"
+//     clientID: '7a712978aeabada1cb22aae7fda0329308f1b933c851492d148baf2bdc288b4a',
+//     clientSecret: '867407abdce6b384b84890276478dd9e21e7c740208ff05ed48882eda0eaac7a',
+//     site: 'https://recurse.com',
+//     redirect_uri: 'http://mingle-me.herokuapp.com/callback',
+//     tokenPath: '/oauth/token',
+//     authorizationPath: '/oauth/authorize'
 // }
 
 // LOCAL
-var oauth2 = require('simple-oauth2')(credentials);
+var credentials = {
+    clientID: "422ad34b0e726f82525f8038d693d2da88ab0eaabc73c89c9da62c9e68f0fc0e",
+    clientSecret: "2152a747c1cce4d0d5e5b19ecd8532d7c56fe643ca480e0bef8ee87aaed20dc4",
+    site: "https://recurse.com",
+    redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+    tokenPath: "/oauth/token",
+    authorizationPath: "/oauth/authorize"
+}
 
-
-var Api = require('./Api');
 
 app.use(session)
 // app.use(express.static('public'));
@@ -69,17 +68,40 @@ app.get('/callback', function (req, res) {
 app.get('/', function (req, res) {
   if (req.session.token) {
     console.log('logged in successful');
-    var batchCall = Api.getPromise('batches', req.session.token.token.access_token)
-    var meCall = Api.getPromise('/people/me', req.session.token.token.access_token)
-    console.log('promise returned', meCall);
+    var batchQuery = Api.getPromise('batches', req.session.token.token.access_token)
+    var meQuery = Api.getPromise('/people/me', req.session.token.token.access_token)
+
+    //chain the call to get all people from current batches
+    batchQuery.then((result) => {
+      //if the /batches call was successful, find out which batches are active a and then query their people
+      var peopleQueries = []
+      //push every active recurser
+      RecurseCenterUtils.getActiveBatches(result).forEach(function (activeBatch) {
+        peopleQueries.push(Api.getPromise('batches/' + activeBatch.id + '/people', req.session.token.token.access_token))
+      })
+
+
+      var activeRecursers = []
+      //if all people queries for current batches have resolved
+      Promise.all(peopleQueries).then((result) => {
+        result.forEach(function (people) {
+          activeRecursers.concat(people)
+        })
+      })
+    },(err){
+      console.log(err);
+    })
+
+    console.log('promise returned', meQuery);
     //if all calls were successful
-    Promise.all([batchCall, meCall]).then((values) => {
-      console.log(values);
+    //#TODO will this go down the batchQuery's chain of promises
+    Promise.all([batchQuery, meQuery]).then((values) => {
+      console.log('all promises resolved', values);
       res.send('<h1>hello' + values[0].first_name + '</h1>')
     }, (err) => {
       console.log(err);
     })
-
+  //redirect to auth if there is no token saved in the session
   }else {
     res.redirect('/auth')
   }
@@ -92,17 +114,17 @@ app.get('/auth', function (req, res) {
 
 //mingleMe Api
 app.get('/me', function (req, res) {
-  Api.get('/people/me', req.session.token.token.access_token, function (err, result) {
-    console.log(result);
-    res.json(result)
-  })
+  // Api.get('/people/me', req.session.token.token.access_token, function (err, result) {
+  //   console.log('fetched me', result);
+  //   res.json(result)
+  // })
 })
 
 app.get('/mybatch', function (req, res) {
-  Api.get('/people/me', req.session.token.token.access_token, function (err, result) {
-    console.log(result);
-    res.json(result)
-  })
+  // Api.get('/batches', req.session.token.token.access_token, function (err, result) {
+  //   console.log(result);
+  //   res.json(result)
+  // })
 })
 
 app.listen(app.get('port'), function() {
