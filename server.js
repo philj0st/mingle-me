@@ -69,16 +69,13 @@ app.get('/callback', function (req, res) {
 app.get('/', function (req, res) {
   if (req.session.token) {
 
-    let batchCall = Api.getPromise('batches', req.session.token.token.access_token)
-    let meCall = Api.getPromise('/people/me', req.session.token.token.access_token)
+    var batchCall = Api.getPromise('batches', req.session.token.token.access_token)
+    var meCall = Api.getPromise('/people/me', req.session.token.token.access_token)
 
     //if all calls were successful
     Promise.all([batchCall, meCall]).then((values) => {
       console.log(values);
-      res.send(
-        <h1>hello {values[0].first_name}</h1>
-        
-      )
+      res.send('<h1>hello' + values[0].first_name + '</h1>')
     }, (err) => {
       console.log(err);
     })
