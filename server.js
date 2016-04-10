@@ -8,24 +8,24 @@ var session = require("express-session")({
 });
 
 // HEROKU
-// var credentials = {
-//   {
-//     clientID: '7a712978aeabada1cb22aae7fda0329308f1b933c851492d148baf2bdc288b4a',
-//     clientSecret: '867407abdce6b384b84890276478dd9e21e7c740208ff05ed48882eda0eaac7a',
-//     site: 'https://recurse.com',
-//     tokenPath: '/oauth/token',
-//     authorizationPath: '/oauth/authorize'
-// }
+var credentials = {
+  {
+    clientID: '7a712978aeabada1cb22aae7fda0329308f1b933c851492d148baf2bdc288b4a',
+    clientSecret: '867407abdce6b384b84890276478dd9e21e7c740208ff05ed48882eda0eaac7a',
+    site: 'https://recurse.com',
+    tokenPath: '/oauth/token',
+    authorizationPath: '/oauth/authorize'
+}
 
 // LOCAL
-var credentials = {
-    clientID: "422ad34b0e726f82525f8038d693d2da88ab0eaabc73c89c9da62c9e68f0fc0e",
-    clientSecret: "2152a747c1cce4d0d5e5b19ecd8532d7c56fe643ca480e0bef8ee87aaed20dc4",
-    site: "https://recurse.com",
-    redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
-    tokenPath: "/oauth/token",
-    authorizationPath: "/oauth/authorize"
-}
+// var credentials = {
+//     clientID: "422ad34b0e726f82525f8038d693d2da88ab0eaabc73c89c9da62c9e68f0fc0e",
+//     clientSecret: "2152a747c1cce4d0d5e5b19ecd8532d7c56fe643ca480e0bef8ee87aaed20dc4",
+//     site: "https://recurse.com",
+//     redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+//     tokenPath: "/oauth/token",
+//     authorizationPath: "/oauth/authorize"
+// }
 
 // LOCAL
 var oauth2 = require('simple-oauth2')(credentials);
@@ -34,7 +34,7 @@ var oauth2 = require('simple-oauth2')(credentials);
 var Api = require('./Api');
 
 app.use(session)
-app.use(express.static('public'));
+// app.use(express.static('public'));
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -46,7 +46,6 @@ var authorization_uri = oauth2.authCode.authorizeURL({
 
 // Callback service parsing the authorization token and asking for the access token
 app.get('/callback', function (req, res) {
-  console.log("CALLBACK ROUTING")
   var code = req.query.code;
 
   oauth2.authCode.getToken({
@@ -72,7 +71,9 @@ app.get('/', function (req, res) {
     var me = Api.get('/people/me', req.session.token.token.access_token, function (err, result) {
       console.log(result);
       //continue .. doesnt print to user-agent
-      res.json(me)
+      // res.json(me)
+      console.log(me);
+      res.send('youre logged in');
     })
   }else {
     res.redirect('/auth')
@@ -83,6 +84,11 @@ app.get('/', function (req, res) {
 app.get('/auth', function (req, res) {
   res.redirect(authorization_uri);
 });
+
+//mingleMe Api
+app.get('/currentBatch', function (req, res) {
+  res.json()
+})
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
