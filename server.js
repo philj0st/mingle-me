@@ -9,10 +9,10 @@ var session = require("express-session")({
 
 // HEROKU
 var credentials = {
-  {
     clientID: '7a712978aeabada1cb22aae7fda0329308f1b933c851492d148baf2bdc288b4a',
     clientSecret: '867407abdce6b384b84890276478dd9e21e7c740208ff05ed48882eda0eaac7a',
     site: 'https://recurse.com',
+    redirect_uri: 'http://mingle-me.herokuapp.com/',
     tokenPath: '/oauth/token',
     authorizationPath: '/oauth/authorize'
 }
