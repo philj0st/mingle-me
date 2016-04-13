@@ -1,172 +1,91 @@
-var people = [
-  {
-    "id": 739,
-    "first_name": "Michael",
-    "middle_name": "Robert",
-    "last_name": "Arntzenius",
-    "email": "daekharel@gmail.com",
-    "twitter": "arntzenius",
-    "github": "rntz",
-    "batch_id": 11,
-    "phone_number": "412 426 0065",
-    "has_photo": true,
-    "interests": "pl, Systems, Compilers, C, Python, Lisp, Scheme, Haskell, agda, twelf, Category theory, logic, Teaching",
-    "before_rc": null,
-    "during_rc": null,
-    "is_faculty": false,
-    "is_hacker_schooler": true,
-    "job": "Student at CMU",
-    "image": "https://d29xw0ra2h4o4u.cloudfront.net/assets/people/michael_robert_arntzenius_150-099dcc8e422ec63f3c2f57e30a2c32202c8bb6bbd2944165eb2a5101883d2c04.jpg",
-    "batch": {
-      "id": 11,
-      "name": "Summer 1, 2014",
-      "start_date": "2014-06-09",
-      "end_date": "2014-08-28"
-    },
-    "pseudonym": "Pillow Venezuelan",
-    "current_location": null,
-    "projects": [
-
-    ],
-    "links": [
-
-    ],
-    "skills": [
-
-    ],
-    "bio": "I'm a PhD student at CMU, currently on a year's leave of absence. I like programming languages and systems - OS kernels, database engines, distributed systems, GCs, language runtimes, that sort of stuff.\r\n\r\nI'm language-agnostic; I know many and I will learn more. I like functional programming but I've worked on imperative codebases. The problem and the techniques are what most interest me; language, style, framework are secondary.\r\n\r\nI'm willing to move. I'm probably heading back to academia in a year, so primarily looking for an internship, but could be convinced otherwise. "
-  },
-  {
-    "id": 736,
-    "first_name": "Nava",
-    "middle_name": "",
-    "last_name": "Balsam",
-    "email": "nava00@gmail.com",
-    "twitter": "",
-    "github": "nava00",
-    "batch_id": 11,
-    "phone_number": "",
-    "has_photo": true,
-    "interests": "Matlab, Mathematica, Python, Math, basic signal processing, JavaScript",
-    "before_rc": null,
-    "during_rc": null,
-    "is_faculty": false,
-    "is_hacker_schooler": true,
-    "job": "Student at Columbia University",
-    "image": "https://d29xw0ra2h4o4u.cloudfront.net/assets/people/nava_balsam_150-2210bb829e7d2752a26a5004a5b3799af8f727fce826adab8d5e30d6b3dcfff3.jpg",
-    "batch": {
-      "id": 11,
-      "name": "Summer 1, 2014",
-      "start_date": "2014-06-09",
-      "end_date": "2014-08-28"
-    },
-    "pseudonym": "Example Pie",
-    "current_location": null,
-    "projects": [
-
-    ],
-    "links": [
-
-    ],
-    "skills": [
-
-    ],
-    "bio": "I enjoy the kind of programming that involves analytic and quantitative thinking.\r\n\r\nI'm currently in my last year of a PhD program in pure math at Columbia University and I have an undergraduate degree in EE where I focused on signal processing. At hacker school I learned to use tools beyond Matlab and Mathematica, and I am most comfortable in python. \r\n\r\nI enjoy working on problems with a mathematical bent but I have worked on a variety of projects in order to broaden my skills and they have been a lot of fun."
-  },
-  {
-    "id": 750,
-    "first_name": "Jasmine",
-    "middle_name": "",
-    "last_name": "Yan",
-    "email": "jasmineyan@college.harvard.edu",
-    "twitter": "",
-    "github": "jazyan",
-    "batch_id": 11,
-    "phone_number": "908-205-7144",
-    "has_photo": true,
-    "interests": null,
-    "before_rc": null,
-    "during_rc": null,
-    "is_faculty": false,
-    "is_hacker_schooler": true,
-    "job": "Student at Harvard",
-    "image": "https://d29xw0ra2h4o4u.cloudfront.net/assets/people/jasmine_yan_150-e97f865484014903d8affc697aacc62be79fc2f40deb51be7f52c58f8fd0115c.jpg",
-    "batch": {
-      "id": 11,
-      "name": "Summer 1, 2014",
-      "start_date": "2014-06-09",
-      "end_date": "2014-08-28"
-    },
-    "pseudonym": "Pendulum Soybean",
-    "current_location": null,
-    "projects": [
-
-    ],
-    "links": [
-
-    ],
-    "skills": [
-
-    ],
-    "bio": "Current Applied Math/CS undergrad at Harvard. I like things that are simple to grasp, but hard to master. I enjoy games/puzzles, algorithms, and Python, and am interested in cryptography, machine learning, and functional programming. I used to play Go and basketball competitively, but now I play just for fun :)"
-  },
-  {
-    "id": 734,
-    "first_name": "Raymond",
-    "middle_name": "",
-    "last_name": "Zeng",
-    "email": "raymond.dot.zeng@gmail.com",
-    "twitter": "_raymondzeng",
-    "github": "raymondzeng",
-    "batch_id": 11,
-    "phone_number": "",
-    "has_photo": true,
-    "interests": "Java, Python, JavaScript, Git, Flask, HTML, CSS, Haskell",
-    "before_rc": null,
-    "during_rc": null,
-    "is_faculty": false,
-    "is_hacker_schooler": true,
-    "job": "Student at Brown",
-    "image": "https://d29xw0ra2h4o4u.cloudfront.net/assets/people/raymond_zeng_150-92071ef758edd2642a2e63c92a23d22a61ea4452ec725e00a96be466bc02ad9c.jpg",
-    "batch": {
-      "id": 11,
-      "name": "Summer 1, 2014",
-      "start_date": "2014-06-09",
-      "end_date": "2014-08-28"
-    },
-    "pseudonym": "Department Pin",
-    "current_location": null,
-    "projects": [
-
-    ],
-    "links": [
-
-    ],
-    "skills": [
-
-    ],
-    "bio": "Undergrad at Brown. Interested in any kind of application development, algorithms, and functional programming.\r\n"
-  }
-]
-
 var time = 10
-var ctx = document.getElementById("canvas").getContext("2d")
+//var ctx = document.getElementById("canvas").getContext("2d")
 
-function preLoadImages(people, callback) {
-  let images = []
-  let imagePromises = people.map((person) => {new Promise(function(resolve, reject) {
-    let img = new Image()
-    img.src = person.image
-    img.addEventListener('load', function (e) {
-      resolve(img)
-    })
-  });})
-  Promise.all(imagePromises).then((values) => {
-    console.log(values);
-    callback(null, values)
+function getCurrentBatches() {
+  return fetch('/batches/active', {
+  	method: 'get',
+    credentials: 'same-origin'
   })
 }
 
+function getPeopleFromBatch(batch) {
+  return fetch(`/batches/${batch.id}/people`, {
+    method: 'get',
+    credentials: 'same-origin'
+  })
+}
+
+getCurrentBatches().then((batchesResponse) => {
+  console.log('batch responses received', batchesResponse);
+  return batchesResponse.json()
+}).then((batches) => {
+  console.log('batches parsed', batches);
+  spawnNotification(`batches loaded ${batches[0].name} and ${batches[1].name}`,'loading_spinner.gif','Initializr')
+  return Promise.all(batches.map(getPeopleFromBatch))
+}).then((peopleResponses) => {
+  console.log('people responses received', peopleResponses);
+  console.log('is an array', Array.isArray(peopleResponses));
+  //can call foreach
+  var arr = []
+  peopleResponses.forEach(r => arr.push(r.json()))
+  return Promise.all(arr)
+  //map does not work for some strange reason
+  // return Promise.all(peopleResponses.map((peopleResponse) => {peopleResponse.json()}))
+}).then((people) => {
+  //parse both arrays in people then merge them into a flattened new one
+  var merged = [].concat.apply([], people.map(JSON.parse));
+  spawnNotification(`${merged.length} active Recurser Data loaded`,'loading_spinner.gif','Initializr')
+  preLoadImages(merged)
+})
+
+function preLoadImages(recurser) {
+  //promise.all returns a new promise that gets resolved when all the promises in the array are resolved
+  Promise.all(recurser.map((r) => new Promise(function(resolve, reject) {
+    var img = new Image()
+    img.src = r.image
+    img.addEventListener('load',function (event) {
+      //replace url with actual image reference
+      r.image = img
+      resolve(r)
+    })
+  }))).then((recurser) => {
+    //recursers who have their image loaded
+    console.log(recurser);
+    spawnNotification(`all ${recurser.length} images preLoaded`,'loading_spinner.gif','Initializr')
+    initWheel(recurser)
+  })
+}
+
+//init canvas
+function initWheel(recurser) {
+  var canvas = document.createElement('canvas');
+  canvas.id = "canvas";
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.zIndex = 8;
+  canvas.style.position = "absolute";
+  canvas.style.border = "1px solid";
+  document.body.appendChild(canvas);
+
+  //draw background
+  var ctx = canvas.getContext("2d")
+  var xPos = 0, yPos =0
+  for (var i = 0; i < recurser.length; i++) {
+    if (xPos > window.width) {
+      ctx.drawImage(recurser[i].image, xPos, yPos)
+      xPos = 0
+      yPos += 150
+    }
+    ctx.drawImage(recurser[i].image, xPos, yPos)
+    xPos += 150
+}
+
+  var theWheel = new Winwheel({
+        'numSegments' : recurser.length,
+        'fillStyle'   : '#e7706f',
+        'lineWidth'   : 1
+    });
+}
 
 function spinWheel() {
   if (time < 1000) {
@@ -174,8 +93,8 @@ function spinWheel() {
     console.log(time)
 
     //change picture
-    var {image} = randomArrayItem(people)
-    document.getElementById('recurser-image').src = image
+    // var {image} = randomArrayItem(people)
+    // document.getElementById('recurser-image').src = image
     setTimeout(spinWheel, time)
   }
 }
@@ -184,10 +103,39 @@ function randomArrayItem(array) {
   return item = array[Math.floor(Math.random()*array.length)];
 }
 
-document.getElementById('spinButton').addEventListener('click', () => {
-  spinWheel()
-})
+function notifyMe() {
+  // Let's check if the browser supports notifications
+  if (!("Notification" in window)) {
+    alert("This browser does not support desktop notification");
+  }
 
-preLoadImages(people, function (err, res) {
-  console.log(res);
-})
+  // Let's check whether notification permissions have already been granted
+  else if (Notification.permission === "granted") {
+    // If it's okay let's create a notification
+    var notification = new Notification("Hi there!");
+  }
+
+  // Otherwise, we need to ask the user for permission
+  else if (Notification.permission !== 'denied') {
+    Notification.requestPermission(function (permission) {
+      // If the user accepts, let's create a notification
+      if (permission === "granted") {
+        var notification = new Notification("Hi there!");
+      }
+    });
+  }
+
+  // At last, if the user has denied notifications, and you
+  // want to be respectful there is no need to bother them any more.
+}
+Notification.requestPermission().then(function(result) {
+  console.log(result);
+});
+function spawnNotification(theBody,theIcon,theTitle) {
+  var options = {
+      body: theBody,
+      icon: theIcon
+  }
+  var n = new Notification(theTitle,options);
+  setTimeout(n.close.bind(n), 4000);
+}
