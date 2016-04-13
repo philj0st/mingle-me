@@ -33,7 +33,7 @@ var config = {
 var oauth2 = require('simple-oauth2')(config);
 
 app.use(session)
-// app.use(express.static('public'));
+app.use(express.static('assets'));
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -69,45 +69,10 @@ app.get('/auth', function (req, res) {
 
 //ROUTES
 app.get('/', function (req, res) {
+  //send index.html if user is logged in
   if (req.session.token) {
-    res.send('logged in')
-    // console.log('logged in successful');
-    // var meQuery = Api.getPromise('/people/me', req.session.token.token.access_token)
-    // var batchQuery = Api.getPromise('/batches', req.session.token.token.access_token)
-    //
-    // //chain the call to get all people from current batches
-    // batchQuery.then((result) => {
-    //   //if the /batches call was successful, find out which batches are active a and then query their people
-    //   var batchMemberPromises = []
-    //   //push every active recurser
-    //   RecurseCenterUtils.getActiveBatches(result).forEach(function (activeBatch) {
-    //     console.log('active batch found: ',activeBatch);
-    //     batchMemberPromises.push(Api.getPromise('batches/' + activeBatch.id + '/people', req.session.token.token.access_token))
-    //   })
-    //
-    //   var activeRecursers = []
-    //   //if all people queries for current batches have resolved
-    //   Promise.all(batchMemberPromises).then((result) => {
-    //     result.forEach(function (people) {
-    //       activeRecursers.concat(people)
-    //       res.send(JSON.stringify(activeRecursers))
-    //     })
-    //   })
-    //
-    //
-    // },(reason) => {
-    //   //rejected batchQuery
-    //   console.log('batchQuery rejected', reason);
-    // })
-    //if all calls were successful
-    //#TODO will this go down the batchQuery's chain of promises
-    // Promise.all([batchQuery, meQuery]).then((values) => {
-    //   console.log('all promises resolved', values);
-    //   res.send('<h1>hello' + values[0].first_name + '</h1>')
-    // }, (err) => {
-    //   console.log(err);
-    // })
-  //redirect to auth if there is no token saved in the session
+//  if (true) {
+    res.sendFile(__dirname + '/public/index.html');
   }else {
     res.redirect('/auth')
   }
@@ -122,7 +87,7 @@ app.get('/me', function (req, res) {
   })
 })
 
-app.get('/activeBatches', function (req, res) {
+app.get('/batches/active', function (req, res) {
   //get batch list
   return Api.getPromise('/batches', req.session.token.token.access_token).then((result) => {
     //find the ones which are active
@@ -137,23 +102,43 @@ app.get('/activeBatches', function (req, res) {
   })
 })
 
-//find a way to refactor code reuse from active badges
-app.get('/activeRecursers', function (req, res) {
-  //get batch list
-  return Api.getPromise('/batches', req.session.token.token.access_token).then((result) => {
+app.get('/batches/:batch_id/people', function (req, res) {
+  return Api.getPromise(`/batches/${req.params.batch_id}/people`, req.session.token.token.access_token).then((result) => {
     //find the ones which are active
-    console.log('inside promise resolver', result);
-    var batches = JSON.parse(result)
-    var activeBatches = RecurseCenterUtils.filterActiveBatches(batches)
-    console.log('batches filtered', activeBatches);
-    //get array of people request promises
-    //GET /api/v1/batches/:batch_id/people
-    peoplePromises = activeBatches.map((batch) => {Api.getPromise(`/batches/${batch.id}/people`, req.session.token.token.access_token)})
+    console.log('inside promise resolver', result)
+    res.json(result)
   },(reason) => {
-    console.log('batches query rejected', reason);
+    console.log('batches/people query rejected', reason);
     res.json(reason)
   })
 })
+
+
+// #TODO find a way to refactor code reuse from active badges and chain promises
+// app.get('/activeRecursers', function (req, res) {
+//   //get batch list
+//     var batchesPromise = Api.getPromise('/batches', req.session.token.token.access_token)
+//     var activePeoplePromises = batchesPromise.then((result) => {
+//     //find the ones which are active
+//     console.log('batchesPromise', result);
+//     var batches = JSON.parse(result)
+//     var activeBatches = RecurseCenterUtils.filterActiveBatches(batches)
+//     console.log('batches filtered', activeBatches);
+//     //get array of people request promises
+//     //GET /api/v1/batches/:batch_id/people
+//     return peoplePromises = activeBatches.map((batch) => {Api.getPromise(`/batches/${batch.id}/people`, req.session.token.token.access_token)})
+//     })
+//   },(reason) => {
+//     console.log('batches query rejected', reason);
+//     res.json(reason)
+//   })
+//
+//   Promise.all(batchesPromise.concat(activePeoplePromises)).then((results) => {
+//     //flatten the array with reduction
+//     //var activeRecursers = peopleArrays.reduce((p, c) => {p.concat(c)}, [])
+//     console.log('recursers', results);
+//     res.json(results)
+// })
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));

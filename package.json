@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/phipix01/mingle-me#readme",
   "dependencies": {
+    "bluebird": "^3.3.5",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "express-sessions": "^1.0.5",
