@@ -68,23 +68,27 @@ function initWheel(recurser) {
   document.body.appendChild(canvas);
 
   //draw background
-  var ctx = canvas.getContext("2d")
+  var ctx = document.getElementById('canvas').getContext("2d")
   var xPos = 0, yPos =0
   for (var i = 0; i < recurser.length; i++) {
-    if (xPos > window.width) {
-      ctx.drawImage(recurser[i].image, xPos, yPos)
+    if (xPos > window.innerWidth) {
       xPos = 0
       yPos += 150
+      ctx.drawImage(recurser[i].image, xPos, yPos)
+      xPos += 150
+    }else {
+      ctx.drawImage(recurser[i].image, xPos, yPos)
+      xPos += 150
     }
-    ctx.drawImage(recurser[i].image, xPos, yPos)
-    xPos += 150
-}
+  }
 
-  var theWheel = new Winwheel({
-        'numSegments' : recurser.length,
-        'fillStyle'   : '#e7706f',
-        'lineWidth'   : 1
-    });
+  // debugger
+  //
+  // var theWheel = new Winwheel({
+  //   'numSegments' : recurser.length,
+  //   'fillStyle'   : '#e7706f',
+  //   'lineWidth'   : 1
+  // });
 }
 
 function spinWheel() {
