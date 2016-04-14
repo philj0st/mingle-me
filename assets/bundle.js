@@ -25,17 +25,18 @@ getCurrentBatches().then((batchesResponse) => {
 }).then((peopleResponses) => {
   console.log('people responses received', peopleResponses);
   console.log('is an array', Array.isArray(peopleResponses));
-  //can call foreach
+  //map does not work for some strange reason
+  // return Promise.all(peopleResponses.map((peopleResponse) => {peopleResponse.json()}))
+  //can call foreach though
   var arr = []
   peopleResponses.forEach(r => arr.push(r.json()))
   return Promise.all(arr)
-  //map does not work for some strange reason
-  // return Promise.all(peopleResponses.map((peopleResponse) => {peopleResponse.json()}))
 }).then((people) => {
-  //parse both arrays in people then merge them into a flattened new one
-  var merged = [].concat.apply([], people.map(JSON.parse));
-  spawnNotification(`${merged.length} active Recurser Data loaded`,'loading_spinner.gif','Initializr')
-  preLoadImages(merged)
+  //parse both arrays in people then reduce them into a flattened new one
+  var parsed = people.map(JSON.parse)
+  var flattened = parsed.reduce((p,c) => p.concat(c), [])
+  spawnNotification(`${flattened.length} active Recurser Data loaded`,'loading_spinner.gif','Initializr')
+  preLoadImages(flattened)
 })
 
 function preLoadImages(recurser) {
