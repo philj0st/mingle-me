@@ -1,12 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>mingleMe</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Mingle Me</title>
     <link rel="stylesheet" href="style.css" charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react-dom.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap-theme.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
+
   </head>
+
   <body>
+
+    <div class="site-wrapper">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+
+          <div id="app" class="inner cover">
+          </div>
+
+          <div class="mastfoot">
+            <div class="inner">
+              <p><span class="glyphicon glyphicon-menu-left" aria-hidden="true"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span> with <span class="glyphicon glyphicon-heart" aria-hidden="true"> by <a href="http://recurse.com/">@RC</a>.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- core JavaScript
+    ================================================== -->
     <!--<script src='Winwheel.js'></script>-->
-    <script src="bundle.js" charset="utf-8"></script>
+    <script type="text/babel" src="bundle.js" charset="utf-8"></script>
   </body>
 </html>

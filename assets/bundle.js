@@ -1,3 +1,19 @@
+var MingleMe = React.createClass({
+  render: function() {
+    return (
+      <a
+        className="btn btn-lg btn-default"
+      >mingle!</a>
+    );
+  }
+});
+
+ReactDOM.render(
+  <MingleMe />,
+  document.getElementById('app')
+);
+
+
 var time = 10
 //var ctx = document.getElementById("canvas").getContext("2d")
 
