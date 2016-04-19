@@ -1,6 +1,6 @@
 var MingleMe = React.createClass({
   mingle: function () {
-    this.state.currentProfile = this.state.profiles[4]
+    this.setState({currentProfile: randomArrayItem(this.state.profiles)})
   },
   getInitialState: function() {
     return {
@@ -63,9 +63,11 @@ var MingleMe = React.createClass({
       console.log('this',this.mingle);
       this.mingle()
     }
+    let {image, first_name, last_name, interests} = this.state.currentProfile
+    console.log(image);
     return (
       <div>
-        <Profile profile={this.state.currentProfile}/>
+        <Profile profile={{image, first_name, last_name, interests}}/>
         <a
           className="btn-mingle btn-lg btn"
           onClick={clickHandler}
@@ -81,14 +83,20 @@ var Profile = React.createClass({
   },
   render: function() {
     console.log('rendering with ', this.props.profile);
+    let interests
+    if (this.props.profile.interests) {
+      interests = this.props.profile.interests.split(',').map(i => {
+        return <kbd>{i}</kbd>
+      })
+    }else {
+      interests = <kbd>no interests :(</kbd>
+    }
     return (
       <div className="profile">
         <canvas height="150" width="150" id="profile-picture" />
         <h3>{`${this.props.profile.first_name} ${this.props.profile.last_name}`}</h3>
         <div className="interests">
-          {this.props.profile.interests.split(',').map(i => {
-            return <kbd>{i}</kbd>
-          })}
+          {interests}
         </div>
       </div>
     )
@@ -161,14 +169,14 @@ function spinWheel() {
     console.log(time)
 
     //change picture
-    // var {image} = randomArrayItem(people)
+    // var {image} = yItem(people)
     // document.getElementById('recurser-image').src = image
     setTimeout(spinWheel, time)
   }
 }
 
 function randomArrayItem(array) {
-  return item = array[Math.floor(Math.random()*array.length)];
+  return array[Math.floor(Math.random()*array.length)];
 }
 
 function notifyMe() {
