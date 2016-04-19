@@ -1,12 +1,52 @@
 var MingleMe = React.createClass({
+  mingle: function () {
+    this.state.currentProfile = this.state.profiles[2]
+  },
+  componentDidMount: function () {
+    //#TODO: init data + images
+  },
+  getInitialState: function() {
+    return {
+      currentProfile: {
+        first_name: "John",
+        last_name: "Doe",
+        interests: "Python, Django, Git, Mercurial, Machine learning, JavaScript, HTML/CSS, microservices, Programming languages",
+        image: ""
+      },
+      profiles: []
+    }
+  },
   render: function() {
     return (
-      <a
-        className="btn btn-lg btn-default"
-      >mingle!</a>
-    );
+      <div>
+        <Profile profile={this.state.currentProfile}/>
+        <a
+          className="btn-mingle btn-lg btn"
+          onClick={this.mingle}
+        >mingle!</a>
+      </div>
+    )
   }
 });
+
+var Profile = React.createClass({
+  componentDidMount: function () {
+    //#TODO: draw canvas
+  },
+  render: function() {
+    return (
+      <div className="profile">
+        <canvas height="150" width="150" id="profile-picture" />
+        <h3>{`${this.props.profile.first_name} ${this.props.profile.last_name}`}</h3>
+        <div className="interests">
+          {this.props.profile.interests.split(',').map(i => {
+            return <kbd>{i}</kbd>
+          })}
+        </div>
+      </div>
+    )
+  }
+})
 
 ReactDOM.render(
   <MingleMe />,
@@ -69,44 +109,44 @@ function preLoadImages(recurser) {
     //recursers who have their image loaded
     console.log(recurser);
     spawnNotification(`all ${recurser.length} images preLoaded`,'loading_spinner.gif','Initializr')
-    initWheel(recurser)
+    //initWheel(recurser)
   })
 }
 
-//init canvas
-function initWheel(recurser) {
-  var canvas = document.createElement('canvas');
-  canvas.id = "canvas";
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  canvas.style.zIndex = 8;
-  canvas.style.position = "absolute";
-  canvas.style.border = "1px solid";
-  document.body.appendChild(canvas);
-
-  //draw background
-  var ctx = document.getElementById('canvas').getContext("2d")
-  var xPos = 0, yPos =0
-  for (var i = 0; i < recurser.length; i++) {
-    if (xPos > window.innerWidth) {
-      xPos = 0
-      yPos += 150
-      ctx.drawImage(recurser[i].image, xPos, yPos)
-      xPos += 150
-    }else {
-      ctx.drawImage(recurser[i].image, xPos, yPos)
-      xPos += 150
-    }
-  }
-
-  // debugger
-  //
-  // var theWheel = new Winwheel({
-  //   'numSegments' : recurser.length,
-  //   'fillStyle'   : '#e7706f',
-  //   'lineWidth'   : 1
-  // });
-}
+// //init canvas
+// function initWheel(recurser) {
+//   var canvas = document.createElement('canvas');
+//   canvas.id = "canvas";
+//   canvas.width = window.innerWidth;
+//   canvas.height = window.innerHeight;
+//   canvas.style.zIndex = 8;
+//   canvas.style.position = "absolute";
+//   canvas.style.border = "1px solid";
+//   document.body.appendChild(canvas);
+//
+//   //draw background
+//   // var ctx = document.getElementById('canvas').getContext("2d")
+//   // var xPos = 0, yPos =0
+//   // for (var i = 0; i < recurser.length; i++) {
+//   //   if (xPos > window.innerWidth) {
+//   //     xPos = 0
+//   //     yPos += 150
+//   //     ctx.drawImage(recurser[i].image, xPos, yPos)
+//   //     xPos += 150
+//   //   }else {
+//   //     ctx.drawImage(recurser[i].image, xPos, yPos)
+//   //     xPos += 150
+//   //   }
+//   // }
+//
+//   // debugger
+//   //
+//   // var theWheel = new Winwheel({
+//   //   'numSegments' : recurser.length,
+//   //   'fillStyle'   : '#e7706f',
+//   //   'lineWidth'   : 1
+//   // });
+// }
 
 function spinWheel() {
   if (time < 1000) {
