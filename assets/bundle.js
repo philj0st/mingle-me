@@ -1,9 +1,6 @@
 var MingleMe = React.createClass({
   mingle: function () {
-    this.state.currentProfile = this.state.profiles[2]
-  },
-  componentDidMount: function () {
-    //#TODO: init data + images
+    this.state.currentProfile = this.state.profiles[4]
   },
   getInitialState: function() {
     return {
@@ -16,13 +13,62 @@ var MingleMe = React.createClass({
       profiles: []
     }
   },
+  componentDidMount: function () {
+    getCurrentBatches().then((batchesResponse) => {
+      console.log('batch responses received', batchesResponse);
+      return batchesResponse.json()
+    }).then((batches) => {
+      console.log('batches parsed', batches);
+      spawnNotification(`batches loaded ${batches[0].name} and ${batches[1].name}`,'loading_spinner.gif','Initializr')
+      return Promise.all(batches.map(getPeopleFromBatch))
+    }).then((peopleResponses) => {
+      console.log('people responses received', peopleResponses);
+      console.log('is an array', Array.isArray(peopleResponses));
+      //map does not work for some strange reason
+      // return Promise.all(peopleResponses.map((peopleResponse) => {peopleResponse.json()}))
+      //can call foreach though
+      var arr = []
+      peopleResponses.forEach(r => arr.push(r.json()))
+      return Promise.all(arr)
+    }).then((people) => {
+      //parse both arrays in people then reduce them into a flattened new one
+      var parsed = people.map(JSON.parse)
+      var flattened = parsed.reduce((p,c) => p.concat(c), [])
+      spawnNotification(`${flattened.length} active Recurser Data loaded`,'loading_spinner.gif','Initializr')
+      preLoadImages(flattened)
+    })
+
+    function preLoadImages(recurser) {
+      //promise.all returns a new promise that gets resolved when all the promises in the array are resolved
+      Promise.all(recurser.map((r) => new Promise(function(resolve, reject) {
+        var img = new Image()
+        img.src = r.image
+        img.addEventListener('load',function (event) {
+          //replace url with actual image reference
+          r.image = img
+          resolve(r)
+        })
+      }))).then((recurser) => {
+        spawnNotification(`all ${recurser.length} images preLoaded`,'loading_spinner.gif','Initializr')
+        //recursers who have their image loaded
+        console.log('binding recursers');
+        bindProfiles(recurser)
+      })
+    }
+    var bindProfiles = (profiles) => this.setState({profiles})
+  },
   render: function() {
+    var clickHandler = (e) => {
+      console.log('clicked mingler');
+      console.log('this',this.mingle);
+      this.mingle()
+    }
     return (
       <div>
         <Profile profile={this.state.currentProfile}/>
         <a
           className="btn-mingle btn-lg btn"
-          onClick={this.mingle}
+          onClick={clickHandler}
         >mingle!</a>
       </div>
     )
@@ -34,6 +80,7 @@ var Profile = React.createClass({
     //#TODO: draw canvas
   },
   render: function() {
+    console.log('rendering with ', this.props.profile);
     return (
       <div className="profile">
         <canvas height="150" width="150" id="profile-picture" />
@@ -71,47 +118,7 @@ function getPeopleFromBatch(batch) {
   })
 }
 
-getCurrentBatches().then((batchesResponse) => {
-  console.log('batch responses received', batchesResponse);
-  return batchesResponse.json()
-}).then((batches) => {
-  console.log('batches parsed', batches);
-  spawnNotification(`batches loaded ${batches[0].name} and ${batches[1].name}`,'loading_spinner.gif','Initializr')
-  return Promise.all(batches.map(getPeopleFromBatch))
-}).then((peopleResponses) => {
-  console.log('people responses received', peopleResponses);
-  console.log('is an array', Array.isArray(peopleResponses));
-  //map does not work for some strange reason
-  // return Promise.all(peopleResponses.map((peopleResponse) => {peopleResponse.json()}))
-  //can call foreach though
-  var arr = []
-  peopleResponses.forEach(r => arr.push(r.json()))
-  return Promise.all(arr)
-}).then((people) => {
-  //parse both arrays in people then reduce them into a flattened new one
-  var parsed = people.map(JSON.parse)
-  var flattened = parsed.reduce((p,c) => p.concat(c), [])
-  spawnNotification(`${flattened.length} active Recurser Data loaded`,'loading_spinner.gif','Initializr')
-  preLoadImages(flattened)
-})
 
-function preLoadImages(recurser) {
-  //promise.all returns a new promise that gets resolved when all the promises in the array are resolved
-  Promise.all(recurser.map((r) => new Promise(function(resolve, reject) {
-    var img = new Image()
-    img.src = r.image
-    img.addEventListener('load',function (event) {
-      //replace url with actual image reference
-      r.image = img
-      resolve(r)
-    })
-  }))).then((recurser) => {
-    //recursers who have their image loaded
-    console.log(recurser);
-    spawnNotification(`all ${recurser.length} images preLoaded`,'loading_spinner.gif','Initializr')
-    //initWheel(recurser)
-  })
-}
 
 // //init canvas
 // function initWheel(recurser) {
