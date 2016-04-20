@@ -1,29 +1,39 @@
 var MingleMe = React.createClass({
+  render: function() {
+    return (
+      <div>
+        <Profile />
+      </div>
+    )
+  }
+});
+
+var Profile = React.createClass({
   mingle: function () {
     this.setState({currentProfile: randomArrayItem(this.state.profiles)})
+    //set profile picture
+    this.refs.avatarCanvas.getContext("2d").drawImage(this.state.currentProfile.image, 0, 0)
   },
   getInitialState: function() {
+    let img = new Image ()
+    img.src = 'default_large.png'
     return {
       currentProfile: {
         first_name: "John",
         last_name: "Doe",
         interests: "Python, Django, Git, Mercurial, Machine learning, JavaScript, HTML/CSS, microservices, Programming languages",
-        image: ""
+        image: img
       },
       profiles: []
     }
   },
   componentDidMount: function () {
     getCurrentBatches().then((batchesResponse) => {
-      console.log('batch responses received', batchesResponse);
       return batchesResponse.json()
     }).then((batches) => {
-      console.log('batches parsed', batches);
       spawnNotification(`batches loaded ${batches[0].name} and ${batches[1].name}`,'loading_spinner.gif','Initializr')
       return Promise.all(batches.map(getPeopleFromBatch))
     }).then((peopleResponses) => {
-      console.log('people responses received', peopleResponses);
-      console.log('is an array', Array.isArray(peopleResponses));
       //map does not work for some strange reason
       // return Promise.all(peopleResponses.map((peopleResponse) => {peopleResponse.json()}))
       //can call foreach though
@@ -51,41 +61,22 @@ var MingleMe = React.createClass({
       }))).then((recurser) => {
         spawnNotification(`all ${recurser.length} images preLoaded`,'loading_spinner.gif','Initializr')
         //recursers who have their image loaded
-        console.log('binding recursers');
         bindProfiles(recurser)
       })
     }
     var bindProfiles = (profiles) => this.setState({profiles})
   },
-  render: function() {
-    var clickHandler = (e) => {
-      console.log('clicked mingler');
-      console.log('this',this.mingle);
-      this.mingle()
-    }
-    let {image, first_name, last_name, interests} = this.state.currentProfile
-    console.log(image);
-    return (
-      <div>
-        <Profile profile={{image, first_name, last_name, interests}}/>
-        <a
-          className="btn-mingle btn-lg btn"
-          onClick={clickHandler}
-        >mingle!</a>
-      </div>
-    )
-  }
-});
-
-var Profile = React.createClass({
-  componentDidMount: function () {
-    //#TODO: draw canvas
+  componentWillUpdate: function () {
+    // let img = new Image();
+    // img.src = "https://d29xw0ra2h4o4u.cloudfront.net/assets/people/michael_salwen_150-01887bbaf24e750864f907bd979e14e4e2722e7636e135518b27e1d313832d29.jpg"
+    // console.log('new created image',typeof img);
+    // this.refs.avatarCanvas.getContext("2d").drawImage(img, 0, 0)
   },
   render: function() {
-    console.log('rendering with ', this.props.profile);
-    let interests
-    if (this.props.profile.interests) {
-      interests = this.props.profile.interests.split(',').map(i => {
+    let {image, first_name, last_name, interests} = this.state.currentProfile
+    // console.log('rendering with ', this.props.profile);
+    if (interests) {
+      interests = interests.split(',').map(i => {
         return <kbd>{i}</kbd>
       })
     }else {
@@ -93,11 +84,15 @@ var Profile = React.createClass({
     }
     return (
       <div className="profile">
-        <canvas height="150" width="150" id="profile-picture" />
-        <h3>{`${this.props.profile.first_name} ${this.props.profile.last_name}`}</h3>
+        <canvas height="150" width="150" ref="avatarCanvas" />
+        <h3>{`${first_name} ${last_name}`}</h3>
         <div className="interests">
           {interests}
         </div>
+        <a
+          className="btn-mingle btn-lg btn"
+          onClick={this.mingle}
+        >mingle!</a>
       </div>
     )
   }
@@ -108,9 +103,9 @@ ReactDOM.render(
   document.getElementById('app')
 );
 
-
-var time = 10
-//var ctx = document.getElementById("canvas").getContext("2d")
+/*
+* Utilities
+*/
 
 function getCurrentBatches() {
   return fetch('/batches/active', {
@@ -205,7 +200,9 @@ function notifyMe() {
   // want to be respectful there is no need to bother them any more.
 }
 Notification.requestPermission().then(function(result) {
-  console.log(result);
+  if (result === 'granted') {
+    console.info('Notification permission granted')
+  }
 });
 function spawnNotification(theBody,theIcon,theTitle) {
   var options = {
