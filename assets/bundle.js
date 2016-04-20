@@ -14,7 +14,31 @@ var Profile = React.createClass({
     this.refs.avatarCanvas.getContext("2d").drawImage(this.state.currentProfile.image, 0, 0)
   },
   mingle: function () {
-    this.setState({currentProfile: randomArrayItem(this.state.profiles)})
+    //if it's not mingleibg already
+    if (!this.state.mingleing) {
+      this.setState({
+        mingleing: true
+      })
+    }
+
+    const spinWheel = time => {
+      if (time < 1000) {
+        time = time + (time/7)
+        console.log(time)
+
+        this.setState({
+          currentProfile: randomArrayItem(this.state.profiles)
+        })
+        setTimeout(function () {
+          spinWheel(time)
+        }, time)
+      }else {
+        this.setState({
+          mingleing: false
+        })
+      }
+    }
+    spinWheel(1)
   },
   getInitialState: function() {
     let img = new Image ()
@@ -26,7 +50,8 @@ var Profile = React.createClass({
         interests: "Python, Django, Git, Mercurial, Machine learning, JavaScript, HTML/CSS, microservices, Programming languages",
         image: img
       },
-      profiles: []
+      profiles: [],
+      mingleing: false
     }
   },
   componentDidUpdate: function () {
@@ -75,13 +100,22 @@ var Profile = React.createClass({
   render: function() {
     console.log('curr prof', this.state.currentProfile);
     let {image, first_name, last_name, interests} = this.state.currentProfile
-    // console.log('rendering with ', this.props.profile);
+    let mingleButton
     if (interests) {
       interests = interests.split(',').map(i => {
         return <kbd>{i}</kbd>
       })
     }else {
       interests = <kbd>no interests :(</kbd>
+    }
+    if (!this.state.mingleing) {
+      mingleButton = (
+              <a
+                className="btn-mingle btn-lg btn"
+                onClick={this.mingle}
+                >mingle!
+              </a>
+              )
     }
     return (
       <div className="profile">
@@ -90,10 +124,7 @@ var Profile = React.createClass({
         <div className="interests">
           {interests}
         </div>
-        <a
-          className="btn-mingle btn-lg btn"
-          onClick={this.mingle}
-        >mingle!</a>
+        {mingleButton}
       </div>
     )
   }
@@ -159,7 +190,7 @@ function getPeopleFromBatch(batch) {
 //   // });
 // }
 
-function spinWheel() {
+const spinWheel = time => {
   if (time < 1000) {
     time = time + (time/7)
     console.log(time)
@@ -167,7 +198,9 @@ function spinWheel() {
     //change picture
     // var {image} = yItem(people)
     // document.getElementById('recurser-image').src = image
-    setTimeout(spinWheel, time)
+    setTimeout(function () {
+      spinWheel(time)
+    }, time)
   }
 }
 
