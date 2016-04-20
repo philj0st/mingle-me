@@ -9,10 +9,12 @@ var MingleMe = React.createClass({
 });
 
 var Profile = React.createClass({
-  mingle: function () {
-    this.setState({currentProfile: randomArrayItem(this.state.profiles)})
+  renderProfileImage: function () {
     //set profile picture
     this.refs.avatarCanvas.getContext("2d").drawImage(this.state.currentProfile.image, 0, 0)
+  },
+  mingle: function () {
+    this.setState({currentProfile: randomArrayItem(this.state.profiles)})
   },
   getInitialState: function() {
     let img = new Image ()
@@ -26,6 +28,10 @@ var Profile = React.createClass({
       },
       profiles: []
     }
+  },
+  componentDidUpdate: function () {
+    this.renderProfileImage()
+    console.log('updated');
   },
   componentDidMount: function () {
     getCurrentBatches().then((batchesResponse) => {
@@ -66,13 +72,8 @@ var Profile = React.createClass({
     }
     var bindProfiles = (profiles) => this.setState({profiles})
   },
-  componentWillUpdate: function () {
-    // let img = new Image();
-    // img.src = "https://d29xw0ra2h4o4u.cloudfront.net/assets/people/michael_salwen_150-01887bbaf24e750864f907bd979e14e4e2722e7636e135518b27e1d313832d29.jpg"
-    // console.log('new created image',typeof img);
-    // this.refs.avatarCanvas.getContext("2d").drawImage(img, 0, 0)
-  },
   render: function() {
+    console.log('curr prof', this.state.currentProfile);
     let {image, first_name, last_name, interests} = this.state.currentProfile
     // console.log('rendering with ', this.props.profile);
     if (interests) {
