@@ -59,10 +59,11 @@ var Profile = React.createClass({
     console.log('updated');
   },
   componentDidMount: function () {
+    //#TODO: refactor
     getCurrentBatches().then((batchesResponse) => {
       return batchesResponse.json()
     }).then((batches) => {
-      spawnNotification(`batches loaded ${batches[0].name} and ${batches[1].name}`,'loading_spinner.gif','Initializr')
+      batches.forEach(batch => spawnNotification(`batch loaded: ${batch.name}`,'loading_spinner.gif','Initializr'))
       return Promise.all(batches.map(getPeopleFromBatch))
     }).then((peopleResponses) => {
       //map does not work for some strange reason
