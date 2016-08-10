@@ -10,25 +10,25 @@ var session = require("express-session")({
 var Api = require('./Api');
 var RecurseCenterUtils = require('./RecurseCenterUtils');
 
-// HEROKU
-var config = {
-    clientID: '7a712978aeabada1cb22aae7fda0329308f1b933c851492d148baf2bdc288b4a',
-    clientSecret: '867407abdce6b384b84890276478dd9e21e7c740208ff05ed48882eda0eaac7a',
-    site: 'https://recurse.com',
-    redirect_uri: 'http://mingle-me.herokuapp.com/callback',
-    tokenPath: '/oauth/token',
-    authorizationPath: '/oauth/authorize'
-}
-
-// LOCAL
+// // HEROKU
 // var config = {
-//     clientID: "422ad34b0e726f82525f8038d693d2da88ab0eaabc73c89c9da62c9e68f0fc0e",
-//     clientSecret: "2152a747c1cce4d0d5e5b19ecd8532d7c56fe643ca480e0bef8ee87aaed20dc4",
+//     clientID: process.env.MM_HEROKU_CLIENT_ID,
+//     clientSecret: process.env.MM_HEROKU_CLIENT_SECRET,
 //     site: 'https://recurse.com',
-//     redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
-//     tokenPath: "/oauth/token",
-//     authorizationPath: "/oauth/authorize"
+//     redirect_uri: 'http://mingle-me.herokuapp.com/callback',
+//     tokenPath: '/oauth/token',
+//     authorizationPath: '/oauth/authorize'
 // }
+
+//LOCAL
+var config = {
+    clientID: process.env.MM_LOCAL_CLIENT_ID,
+    clientSecret: process.env.MM_LOCAL_CLIENT_SECRET,
+    site: 'https://recurse.com',
+    redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+    tokenPath: "/oauth/token",
+    authorizationPath: "/oauth/authorize"
+}
 
 var oauth2 = require('simple-oauth2')(config);
 
@@ -96,6 +96,26 @@ app.get('/batches/active', function (req, res) {
     res.json(activeBatches)
   },(reason) => {
     res.json(reason)
+  })
+})
+
+//#TODO: test this
+app.get('/batches/active/people', function (req, res) {
+  console.log('hit endpoint', req.originalUrl);
+  //get batch list
+  Api.getPromise('/batches', req.session.token.token.access_token).then((result) => {
+    console.log('batches promises created', result);
+    var batches = JSON.parse(result)
+    //filter the ones which are active
+    var activeBatches = RecurseCenterUtils.filterActiveBatches(batches)
+    console.log('active batches filtered', activeBatches);
+    //doesnt trigger .then .. maybe doesnt get resolved??
+    return Promise.all(activeBatches.map(batch => Api.getPromise(`/batches/${batch.batch_id}/people`, req.session.token.token.access_token)))
+  },(reason) => {
+    console.error('cannot query batches');
+  }).then(activePeople => {
+    console.log('batches active people',activePeople);
+    return activePeople
   })
 })
 
